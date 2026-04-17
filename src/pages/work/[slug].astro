@@ -1,0 +1,127 @@
+---
+import { getCollection, render } from 'astro:content';
+import Post from '../../layouts/Post.astro';
+import { formatDateRange } from '../../lib/content';
+
+export async function getStaticPaths() {
+  const entries = await getCollection('work', ({ data }) => !data.draft);
+  return entries.map(entry => ({
+    params: { slug: entry.id },
+    props: { entry },
+  }));
+}
+
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+const { title, org, role, dateStart, dateEnd, category, domains, countries, impact, mediaLinks, policyLinks, externalUrl } = entry.data;
+const dateRange = formatDateRange(dateStart, dateEnd);
+---
+
+<Post
+  title={title}
+  description={`${role} at ${org}. ${impact ?? ''}`}
+  backHref="/work"
+  backLabel="Work"
+>
+  <div class="work-meta">
+    <div class="meta-row">
+      <span class={`badge ${category}`}>{category}</span>
+      <span class="meta-date">{dateRange}</span>
+    </div>
+    <p class="meta-org">{org}</p>
+    <p class="meta-role">{role}</p>
+    {impact && <p class="meta-impact">{impact}</p>}
+    <div class="meta-tags">
+      {domains.map(d => <span class="tag">{d}</span>)}
+      {countries.map(c => <span class="tag tag-country">{c}</span>)}
+    </div>
+    {(mediaLinks?.length || policyLinks?.length || externalUrl) && (
+      <div class="meta-links">
+        {externalUrl && (
+          <a href={externalUrl} target="_blank" rel="noopener" class="meta-link">
+            Read paper ↗
+          </a>
+        )}
+        {mediaLinks?.map(l => (
+          <a href={l.url} target="_blank" rel="noopener" class="meta-link">{l.label} ↗</a>
+        ))}
+        {policyLinks?.map(l => (
+          <a href={l.url} target="_blank" rel="noopener" class="meta-link">{l.label} ↗</a>
+        ))}
+      </div>
+    )}
+  </div>
+
+  <Content />
+</Post>
+
+<style>
+.work-meta {
+  margin-bottom: var(--space-12);
+  padding-bottom: var(--space-8);
+  border-bottom: 1px solid var(--color-border);
+}
+.meta-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  margin-bottom: var(--space-4);
+}
+.meta-date {
+  font-size: var(--text-sm);
+  color: var(--color-text-tertiary);
+}
+.meta-org {
+  font-size: var(--text-base);
+  color: var(--color-text-secondary);
+  font-weight: 500;
+  margin-bottom: var(--space-1);
+  line-height: 1.3;
+}
+.meta-role {
+  font-size: var(--text-sm);
+  color: var(--color-text-tertiary);
+  margin-bottom: var(--space-3);
+  line-height: 1;
+}
+.meta-impact {
+  font-size: var(--text-base);
+  color: var(--color-accent);
+  font-weight: 500;
+  margin-bottom: var(--space-4);
+  line-height: 1;
+}
+.meta-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-bottom: var(--space-6);
+}
+.tag {
+  font-size: var(--text-xs);
+  color: var(--color-text-tertiary);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  padding: 2px 8px;
+  border-radius: 100px;
+}
+.tag-country {
+  color: var(--color-accent);
+  background: var(--color-accent-light);
+  border-color: transparent;
+}
+.meta-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+}
+.meta-link {
+  font-size: var(--text-sm);
+  color: var(--color-accent);
+  font-weight: 500;
+  transition: opacity .15s;
+}
+.meta-link:hover {
+  opacity: 0.7;
+}
+</style>

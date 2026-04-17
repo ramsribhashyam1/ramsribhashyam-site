@@ -1,0 +1,70 @@
+---
+const pathname = Astro.url.pathname;
+const isActive = (href: string) =>
+  href === '/' ? pathname === '/' : pathname.startsWith(href);
+---
+
+<header class="site-header">
+  <nav class="container nav-inner">
+    <a href="/" class="nav-home" class:list={[{ active: isActive('/') }]}>
+      Ram Sribhashyam
+    </a>
+    <ul class="nav-links">
+      <li><a href="/work" class:list={[{ active: isActive('/work') }]}>Work</a></li>
+      <li><a href="/foundry" class:list={[{ active: isActive('/foundry') }]}>The Foundry</a></li>
+      <li><a href="/fieldwork" class:list={[{ active: isActive('/fieldwork') }]}>Fieldwork</a></li>
+      <li><a href="/about" class:list={[{ active: isActive('/about') }]}>About</a></li>
+    </ul>
+  </nav>
+</header>
+
+<style>
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  height: var(--nav-height);
+  background: var(--color-bg);
+  border-bottom: 1px solid var(--color-border);
+  display: flex;
+  align-items: center;
+}
+.nav-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-8);
+}
+.nav-home {
+  font-size: var(--text-sm);
+  font-weight: 500;
+  color: var(--color-text-primary);
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+}
+.nav-home.active {
+  color: var(--color-accent);
+}
+.nav-links {
+  list-style: none;
+  display: flex;
+  gap: var(--space-6);
+}
+.nav-links a {
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+  transition: color .15s;
+}
+.nav-links a:hover,
+.nav-links a.active {
+  color: var(--color-accent);
+}
+@media (max-width: 480px) {
+  .nav-links {
+    gap: var(--space-4);
+  }
+  .nav-links a {
+    font-size: var(--text-xs);
+  }
+}
+</style>

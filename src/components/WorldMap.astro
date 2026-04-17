@@ -1,0 +1,191 @@
+---
+import { getCollection } from 'astro:content';
+
+const fieldworkEntries = await getCollection('fieldwork');
+const fieldworkJson = JSON.stringify(fieldworkEntries.map(e => e.data));
+---
+
+<div id="world-map-container">
+  <div id="world-map"></div>
+  <div id="map-tooltip" role="tooltip" aria-hidden="true"></div>
+</div>
+
+<script define:vars={{ fieldworkJson }}>
+const fieldwork = JSON.parse(fieldworkJson);
+const workedCountries = new Map(fieldwork.map(f => [f.countryCode, f]));
+
+function loadScript(src) {
+  return new Promise((resolve, reject) => {
+    const s = document.createElement('script');
+    s.src = src;
+    s.onload = resolve;
+    s.onerror = reject;
+    document.head.appendChild(s);
+  });
+}
+
+async function initMap() {
+  await loadScript('https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js');
+  await loadScript('https://cdn.jsdelivr.net/npm/topojson@3/dist/topojson.min.js');
+
+  const container = document.getElementById('world-map');
+  const tooltip = document.getElementById('map-tooltip');
+  if (!container || !tooltip) return;
+
+  // ISO alpha-2 → TopoJSON numeric ID mapping (subset of worked countries)
+  const isoToNumeric = {
+    IN: '356', RW: '646', MA: '504', JO: '400', LB: '422',
+    BA: '070', RS: '688', MK: '807', AL: '008', ME: '499',
+    XK: '383', GH: '288', NG: '566', TZ: '834', US: '840',
+  };
+  const workedNumericIds = new Set(
+    [...workedCountries.keys()]
+      .map(code => isoToNumeric[code])
+      .filter(Boolean)
+  );
+
+  function draw() {
+    container.innerHTML = '';
+    const width = container.clientWidth;
+    const height = container.clientHeight;
+
+    const svg = d3.select(container)
+      .append('svg')
+      .attr('width', width)
+      .attr('height', height)
+      .attr('aria-label', 'World map showing countries where Ram has worked');
+
+    const projection = d3.geoNaturalEarth1()
+      .scale(width / 6.5)
+      .translate([width / 2, height / 2]);
+
+    const path = d3.geoPath().projection(projection);
+
+    const style = getComputedStyle(document.documentElement);
+    const colorAccent = style.getPropertyValue('--color-accent').trim();
+    const colorSurface = style.getPropertyValue('--color-surface').trim();
+    const colorBorder = style.getPropertyValue('--color-border').trim();
+
+    fetch('/world-110m.json')
+      .then(r => r.json())
+      .then(world => {
+        const countries = topojson.feature(world, world.objects.countries);
+
+        svg.selectAll('path')
+          .data(countries.features)
+          .join('path')
+          .attr('d', path)
+          .attr('fill', d => workedNumericIds.has(String(d.id)) ? colorAccent : colorSurface)
+          .attr('stroke', colorBorder)
+          .attr('stroke-width', 0.5)
+          .attr('class', d => workedNumericIds.has(String(d.id)) ? 'country worked' : 'country')
+          .style('cursor', d => workedNumericIds.has(String(d.id)) ? 'pointer' : 'default')
+          .on('mouseenter', function(event, d) {
+            const numId = String(d.id);
+            if (!workedNumericIds.has(numId)) return;
+
+            const alpha2 = Object.entries(isoToNumeric).find(([, v]) => v === numId)?.[0];
+            const data = workedCountries.get(alpha2);
+            if (!data) return;
+
+            d3.select(this).attr('fill', colorAccent).attr('opacity', 0.8);
+
+            tooltip.innerHTML = `
+              <strong>${data.countryName}</strong>
+              ${data.roles.map(r => `
+                <div class="tip-role">
+                  <span class="tip-org">${r.org}</span>
+                  <span class="tip-title">${r.title} · ${r.years}</span>
+                  <span class="tip-summary">${r.summary}</span>
+                </div>
+              `).join('')}
+            `;
+            tooltip.setAttribute('aria-hidden', 'false');
+            tooltip.style.display = 'block';
+          })
+          .on('mousemove', function(event) {
+            const rect = container.getBoundingClientRect();
+            const x = event.clientX - rect.left;
+            const y = event.clientY - rect.top;
+            tooltip.style.left = Math.min(x + 12, container.clientWidth - 220) + 'px';
+            tooltip.style.top = Math.max(y - 10, 8) + 'px';
+          })
+          .on('mouseleave', function(event, d) {
+            const numId = String(d.id);
+            d3.select(this).attr('fill', workedNumericIds.has(numId) ? colorAccent : colorSurface).attr('opacity', 1);
+            tooltip.style.display = 'none';
+            tooltip.setAttribute('aria-hidden', 'true');
+          })
+          .on('click', function(event, d) {
+            const numId = String(d.id);
+            if (!workedNumericIds.has(numId)) return;
+            const alpha2 = Object.entries(isoToNumeric).find(([, v]) => v === numId)?.[0];
+            if (alpha2) window.location.href = `/work?country=${alpha2}`;
+          });
+      });
+  }
+
+  draw();
+
+  let resizeTimer;
+  window.addEventListener('resize', () => {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(draw, 150);
+  });
+}
+
+initMap();
+</script>
+
+<style>
+#world-map-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+#world-map {
+  width: 100%;
+  height: 100%;
+}
+#world-map :global(.worked) {
+  transition: opacity .15s;
+}
+#map-tooltip {
+  display: none;
+  position: absolute;
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  padding: var(--space-4);
+  font-size: var(--text-xs);
+  max-width: 210px;
+  pointer-events: none;
+  box-shadow: 0 4px 16px rgba(0,0,0,.1);
+  z-index: 10;
+}
+#map-tooltip :global(strong) {
+  display: block;
+  font-size: var(--text-sm);
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-3);
+}
+#map-tooltip :global(.tip-role) {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-bottom: var(--space-3);
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--color-border);
+}
+#map-tooltip :global(.tip-org) {
+  font-weight: 500;
+  color: var(--color-accent);
+}
+#map-tooltip :global(.tip-title) {
+  color: var(--color-text-secondary);
+}
+#map-tooltip :global(.tip-summary) {
+  color: var(--color-text-tertiary);
+  line-height: 1.4;
+}
+</style>

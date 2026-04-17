@@ -1,17 +1,194 @@
 ---
+import Base from '../layouts/Base.astro';
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
+import WorldMap from '../components/WorldMap.astro';
+import NowBlock from '../components/NowBlock.astro';
+import FoundryCard from '../components/FoundryCard.astro';
+import { getFeaturedWork, getPublishedFoundry } from '../lib/content';
 
+const featuredWork = await getFeaturedWork();
+const recentFoundry = (await getPublishedFoundry()).slice(0, 3);
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+<Base title="Sai Sri Ram Sribhashyam">
+  <Nav />
+  <main>
+    <section class="hero container">
+      <p class="hero-label">Sai Sri Ram Sribhashyam</p>
+      <h1 class="hero-line">
+        Building bridges between human capability<br />and institutional legibility.
+      </h1>
+      <p class="hero-sub">
+        AI systems · Labor markets · Digital public infrastructure · 15 countries
+      </p>
+      <nav class="hero-nav">
+        <a href="/work">Work</a>
+        <a href="/foundry">The Foundry</a>
+        <a href="/fieldwork">Fieldwork</a>
+        <a href="/about">About</a>
+      </nav>
+    </section>
+
+    <section class="map-section" aria-label="Countries where I have worked">
+      <WorldMap />
+    </section>
+
+    <section class="now-section container">
+      <NowBlock />
+    </section>
+
+    {featuredWork.length > 0 && (
+      <section class="featured-section container">
+        <h2 class="section-heading">Selected work</h2>
+        <div class="work-grid">
+          {featuredWork.map(entry => (
+            <article class="featured-work-item">
+              <a href={`/work/${entry.id}`} class="featured-link">
+                <p class="featured-org">{entry.data.org}</p>
+                <h3 class="featured-title">{entry.data.title}</h3>
+                {entry.data.impact && (
+                  <p class="featured-impact">{entry.data.impact}</p>
+                )}
+              </a>
+            </article>
+          ))}
+        </div>
+        <a href="/work" class="see-all">All work →</a>
+      </section>
+    )}
+
+    {recentFoundry.length > 0 && (
+      <section class="foundry-section container">
+        <h2 class="section-heading">Recent from the Foundry</h2>
+        <div class="foundry-grid">
+          {recentFoundry.map(entry => (
+            <FoundryCard entry={entry} />
+          ))}
+        </div>
+        <a href="/foundry" class="see-all">All writing →</a>
+      </section>
+    )}
+  </main>
+  <Footer />
+</Base>
+
+<style>
+.hero {
+  padding: var(--space-24) 0 var(--space-16);
+}
+.hero-label {
+  font-size: var(--text-sm);
+  color: var(--color-text-tertiary);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: var(--space-4);
+  line-height: 1;
+}
+.hero-line {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  line-height: 1.1;
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-6);
+  max-width: 22ch;
+}
+.hero-sub {
+  font-size: var(--text-base);
+  color: var(--color-text-tertiary);
+  margin-bottom: var(--space-8);
+  line-height: 1;
+}
+.hero-nav {
+  display: flex;
+  gap: var(--space-6);
+  flex-wrap: wrap;
+}
+.hero-nav a {
+  font-size: var(--text-sm);
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  border-bottom: 1px solid var(--color-border);
+  padding-bottom: 2px;
+  transition: color .15s, border-color .15s;
+}
+.hero-nav a:hover {
+  color: var(--color-accent);
+  border-color: var(--color-accent);
+}
+.map-section {
+  width: 100%;
+  height: 420px;
+  background: var(--color-surface);
+  border-top: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--color-border);
+  overflow: hidden;
+}
+.now-section {
+  padding: var(--space-16) 0;
+}
+.featured-section,
+.foundry-section {
+  padding-bottom: var(--space-16);
+}
+.section-heading {
+  font-family: var(--font-display);
+  font-size: var(--text-2xl);
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-8);
+}
+.work-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: var(--space-4);
+  margin-bottom: var(--space-6);
+}
+.featured-work-item {
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  transition: border-color .15s;
+}
+.featured-work-item:hover {
+  border-color: var(--color-accent);
+}
+.featured-link {
+  display: block;
+  padding: var(--space-6);
+}
+.featured-org {
+  font-size: var(--text-xs);
+  color: var(--color-text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: var(--space-2);
+  line-height: 1;
+}
+.featured-title {
+  font-family: var(--font-display);
+  font-size: var(--text-lg);
+  color: var(--color-text-primary);
+  line-height: 1.25;
+  margin-bottom: var(--space-3);
+}
+.featured-impact {
+  font-size: var(--text-sm);
+  color: var(--color-accent);
+  font-weight: 500;
+  line-height: 1;
+}
+.foundry-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: var(--space-4);
+  margin-bottom: var(--space-6);
+}
+.see-all {
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+  font-weight: 500;
+  transition: color .15s;
+}
+.see-all:hover {
+  color: var(--color-accent);
+}
+</style>

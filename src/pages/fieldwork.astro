@@ -1,0 +1,144 @@
+---
+import Page from '../layouts/Page.astro';
+import WorldMap from '../components/WorldMap.astro';
+import { getCollection } from 'astro:content';
+
+const fieldwork = await getCollection('fieldwork');
+const sorted = [...fieldwork].sort((a, b) =>
+  a.data.region.localeCompare(b.data.region)
+);
+---
+
+<Page
+  title="Fieldwork"
+  description="15 countries across South Asia, Sub-Saharan Africa, MENA, and the Western Balkans."
+>
+  <section class="map-section" aria-label="Countries where I have worked">
+    <WorldMap />
+  </section>
+
+  <div class="container page-content">
+    <div class="page-header">
+      <h1 class="page-title">Fieldwork</h1>
+      <p class="page-sub">
+        Work spanning 15 countries across South Asia, Sub-Saharan Africa,
+        MENA, and the Western Balkans. Hover the map to explore.
+      </p>
+    </div>
+
+    <div class="country-list">
+      {sorted.map(entry => (
+        <div class="country-item">
+          <div class="country-header">
+            <h2 class="country-name">{entry.data.countryName}</h2>
+            <span class="country-region">{entry.data.region}</span>
+          </div>
+          <ul class="role-list">
+            {entry.data.roles.map(role => (
+              <li class="role-item">
+                <div class="role-header">
+                  <span class="role-org">{role.org}</span>
+                  <span class="role-years">{role.years}</span>
+                </div>
+                <p class="role-title">{role.title}</p>
+                <p class="role-summary">{role.summary}</p>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))}
+    </div>
+  </div>
+</Page>
+
+<style>
+.map-section {
+  width: 100%;
+  height: 480px;
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+  overflow: hidden;
+}
+.page-content   { padding: var(--space-16) 0 var(--space-24); }
+.page-header    { margin-bottom: var(--space-16); }
+.page-title {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 4vw, 3rem);
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-4);
+}
+.page-sub {
+  font-size: var(--text-base);
+  color: var(--color-text-secondary);
+  max-width: 52ch;
+  line-height: 1.6;
+}
+.country-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: var(--space-6);
+}
+.country-item {
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  padding: var(--space-6);
+  background: var(--color-bg);
+}
+.country-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-4);
+  margin-bottom: var(--space-4);
+}
+.country-name {
+  font-family: var(--font-display);
+  font-size: var(--text-xl);
+  color: var(--color-text-primary);
+}
+.country-region {
+  font-size: var(--text-xs);
+  color: var(--color-text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+}
+.role-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+.role-item {
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--color-border);
+}
+.role-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  margin-bottom: var(--space-1);
+}
+.role-org {
+  font-size: var(--text-sm);
+  font-weight: 500;
+  color: var(--color-accent);
+}
+.role-years {
+  font-size: var(--text-xs);
+  color: var(--color-text-tertiary);
+  white-space: nowrap;
+}
+.role-title {
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+  margin-bottom: var(--space-2);
+  line-height: 1;
+}
+.role-summary {
+  font-size: var(--text-sm);
+  color: var(--color-text-tertiary);
+  line-height: 1.5;
+}
+</style>

@@ -1,0 +1,61 @@
+---
+import { getCollection, render } from 'astro:content';
+import Post from '../../layouts/Post.astro';
+import { formatDate } from '../../lib/content';
+
+export async function getStaticPaths() {
+  const entries = await getCollection('foundry', ({ data }) =>
+    !data.draft && data.source === 'site'
+  );
+  return entries.map(entry => ({
+    params: { slug: entry.id },
+    props: { entry },
+  }));
+}
+
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+const { title, date, type, excerpt, tags } = entry.data;
+---
+
+<Post
+  title={title}
+  description={excerpt}
+  date={formatDate(date)}
+  backHref="/foundry"
+  backLabel="The Foundry"
+>
+  <div class="post-meta">
+    <span class={`badge ${type}`}>{type}</span>
+    <div class="post-tags">
+      {tags.map(t => <span class="tag">{t}</span>)}
+    </div>
+  </div>
+
+  <Content />
+</Post>
+
+<style>
+.post-meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+  margin-bottom: var(--space-10);
+  padding-bottom: var(--space-8);
+  border-bottom: 1px solid var(--color-border);
+}
+.post-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+.tag {
+  font-size: var(--text-xs);
+  color: var(--color-text-tertiary);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  padding: 2px 8px;
+  border-radius: 100px;
+}
+</style>

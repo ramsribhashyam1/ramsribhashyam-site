@@ -1,0 +1,87 @@
+---
+import Page from '../../layouts/Page.astro';
+import FoundryCard from '../../components/FoundryCard.astro';
+import { getPublishedFoundry } from '../../lib/content';
+
+const entries = await getPublishedFoundry();
+
+const typeFilter = Astro.url.searchParams.get('type');
+const filtered = typeFilter ? entries.filter(e => e.data.type === typeFilter) : entries;
+
+const types = ['essay', 'note', 'experiment', 'diagram', 'framework', 'external'] as const;
+---
+
+<Page title="The Foundry" description="Essays, notes, experiments, and external writing on AI, labor markets, and digital infrastructure.">
+  <div class="container page-content">
+    <div class="page-header">
+      <h1 class="page-title">The Foundry</h1>
+      <p class="page-sub">Essays, notes, and experiments. Ideas in various states of finish.</p>
+    </div>
+
+    <div class="filter-row">
+      <a href="/foundry" class:list={['filter-chip', { active: !typeFilter }]}>All</a>
+      {types.map(t => (
+        <a href={`/foundry?type=${t}`} class:list={['filter-chip', `chip-${t}`, { active: typeFilter === t }]}>{t}</a>
+      ))}
+    </div>
+
+    {filtered.length > 0 ? (
+      <div class="foundry-grid">
+        {filtered.map(entry => <FoundryCard entry={entry} />)}
+      </div>
+    ) : (
+      <p class="empty-state">Nothing here yet.</p>
+    )}
+  </div>
+</Page>
+
+<style>
+.page-content { padding: var(--space-16) 0 var(--space-24); }
+.page-header  { margin-bottom: var(--space-12); }
+.page-title {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 4vw, 3rem);
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-4);
+}
+.page-sub {
+  font-size: var(--text-base);
+  color: var(--color-text-secondary);
+  max-width: 48ch;
+  line-height: 1.6;
+}
+.filter-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-bottom: var(--space-10);
+}
+.filter-chip {
+  font-size: var(--text-xs);
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 4px 10px;
+  border-radius: 100px;
+  border: 1px solid var(--color-border);
+  color: var(--color-text-secondary);
+  background: var(--color-bg);
+  transition: all .15s;
+}
+.filter-chip:hover,
+.filter-chip.active {
+  background: var(--color-accent);
+  color: #fff;
+  border-color: var(--color-accent);
+}
+.foundry-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: var(--space-4);
+}
+.empty-state {
+  color: var(--color-text-tertiary);
+  font-size: var(--text-base);
+  padding: var(--space-16) 0;
+}
+</style>

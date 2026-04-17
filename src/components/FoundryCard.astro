@@ -1,0 +1,115 @@
+---
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  entry: CollectionEntry<'foundry'>;
+}
+
+const { entry } = Astro.props;
+const { title, date, type, source, externalUrl, excerpt, tags } = entry.data;
+
+const isExternal = source !== 'site';
+const href = isExternal && externalUrl ? externalUrl : `/foundry/${entry.id}`;
+
+const formattedDate = new Date(date).toLocaleDateString('en-US', {
+  year: 'numeric',
+  month: 'short',
+  day: 'numeric',
+});
+---
+
+<article class="foundry-card">
+  <a
+    href={href}
+    class="card-link"
+    target={isExternal ? '_blank' : undefined}
+    rel={isExternal ? 'noopener noreferrer' : undefined}
+  >
+    <div class="card-header">
+      <span class={`badge ${type}`}>{type}</span>
+      <span class="card-date">{formattedDate}</span>
+    </div>
+    <h3 class="card-title">{title}</h3>
+    <p class="card-excerpt">{excerpt}</p>
+    <div class="card-footer">
+      <div class="card-tags">
+        {tags.slice(0, 3).map(t => (
+          <span class="tag">{t}</span>
+        ))}
+      </div>
+      {isExternal && (
+        <span class="card-source">{source} ↗</span>
+      )}
+    </div>
+  </a>
+</article>
+
+<style>
+.foundry-card {
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  background: var(--color-bg);
+  transition: border-color .15s, box-shadow .15s;
+}
+.foundry-card:hover {
+  border-color: var(--color-accent);
+  box-shadow: 0 2px 12px rgba(0,0,0,.06);
+}
+.card-link {
+  display: block;
+  padding: var(--space-6);
+  color: inherit;
+}
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-4);
+}
+.card-date {
+  font-size: var(--text-xs);
+  color: var(--color-text-tertiary);
+}
+.card-title {
+  font-family: var(--font-display);
+  font-size: var(--text-xl);
+  color: var(--color-text-primary);
+  line-height: 1.2;
+  margin-bottom: var(--space-3);
+}
+.card-excerpt {
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+  line-height: 1.6;
+  margin-bottom: var(--space-4);
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+}
+.card-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+.tag {
+  font-size: var(--text-xs);
+  color: var(--color-text-tertiary);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  padding: 2px 8px;
+  border-radius: 100px;
+}
+.card-source {
+  font-size: var(--text-xs);
+  color: var(--color-text-tertiary);
+  white-space: nowrap;
+  text-transform: capitalize;
+}
+</style>

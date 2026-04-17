@@ -1,0 +1,116 @@
+---
+import Page from '../../layouts/Page.astro';
+import WorkCard from '../../components/WorkCard.astro';
+import { getPublishedWork, groupWorkByCategory } from '../../lib/content';
+
+const allWork = await getPublishedWork();
+const countryFilter = Astro.url.searchParams.get('country');
+
+const filtered = countryFilter
+  ? allWork.filter(e => e.data.countries.includes(countryFilter))
+  : allWork;
+
+const { projects, publications, tools } = groupWorkByCategory(filtered);
+
+const sortByDate = (a: typeof allWork[0], b: typeof allWork[0]) =>
+  new Date(b.data.dateStart).getTime() - new Date(a.data.dateStart).getTime();
+
+projects.sort(sortByDate);
+publications.sort(sortByDate);
+tools.sort(sortByDate);
+---
+
+<Page title="Work" description="Case studies, publications, and tools from 12 years across the World Bank, Tony Blair Institute, Mu Sigma, and Grameen Foundation.">
+  <div class="container page-content">
+    <div class="page-header">
+      <h1 class="page-title">Work</h1>
+      <p class="page-sub">
+        12 years across development finance, AI product, and applied research.
+        {countryFilter && (
+          <span class="filter-note">
+            Showing work in <strong>{countryFilter}</strong>.
+            <a href="/work">Clear filter</a>
+          </span>
+        )}
+      </p>
+    </div>
+
+    {projects.length > 0 && (
+      <section class="work-section">
+        <h2 class="section-label">Projects</h2>
+        <div class="work-grid">
+          {projects.map(entry => <WorkCard entry={entry} />)}
+        </div>
+      </section>
+    )}
+
+    {publications.length > 0 && (
+      <section class="work-section">
+        <h2 class="section-label">Publications</h2>
+        <div class="work-grid">
+          {publications.map(entry => <WorkCard entry={entry} />)}
+        </div>
+      </section>
+    )}
+
+    {tools.length > 0 && (
+      <section class="work-section">
+        <h2 class="section-label">Tools</h2>
+        <div class="work-grid">
+          {tools.map(entry => <WorkCard entry={entry} />)}
+        </div>
+      </section>
+    )}
+
+    {filtered.length === 0 && (
+      <p class="empty-state">No work entries found{countryFilter ? ` for country "${countryFilter}"` : ''}.</p>
+    )}
+  </div>
+</Page>
+
+<style>
+.page-content { padding: var(--space-16) 0 var(--space-24); }
+.page-header  { margin-bottom: var(--space-16); }
+.page-title {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 4vw, 3rem);
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-4);
+}
+.page-sub {
+  font-size: var(--text-base);
+  color: var(--color-text-secondary);
+  max-width: 52ch;
+  line-height: 1.6;
+}
+.filter-note {
+  display: block;
+  margin-top: var(--space-2);
+  font-size: var(--text-sm);
+  color: var(--color-text-tertiary);
+}
+.filter-note a {
+  color: var(--color-accent);
+  text-decoration: underline;
+  margin-left: var(--space-2);
+}
+.work-section { margin-bottom: var(--space-16); }
+.section-label {
+  font-size: var(--text-xs);
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-text-tertiary);
+  margin-bottom: var(--space-6);
+}
+.work-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: var(--space-4);
+}
+.empty-state {
+  color: var(--color-text-tertiary);
+  font-size: var(--text-base);
+  padding: var(--space-16) 0;
+}
+</style>

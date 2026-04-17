@@ -1,0 +1,19 @@
+{
+  "countryCode": "IN",
+  "countryName": "India",
+  "region": "South Asia",
+  "roles": [
+    {
+      "org": "Tony Blair Institute",
+      "title": "Senior Advisor",
+      "years": "2025",
+      "summary": "Advised Andhra Pradesh government on AI-enabled education-to-employment platform across 5 ministries."
+    },
+    {
+      "org": "World Bank",
+      "title": "AI Product Manager",
+      "years": "2022–2026",
+      "summary": "Labor market diagnostics, NLP pipeline over 100K+ job postings, skills taxonomy for South Asia."
+    }
+  ]
+}

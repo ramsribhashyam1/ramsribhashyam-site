@@ -1,0 +1,101 @@
+---
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  entry: CollectionEntry<'work'>;
+}
+
+const { entry } = Astro.props;
+const { title, org, role, dateStart, dateEnd, category, domains, countries, impact } = entry.data;
+
+const startYear = dateStart.slice(0, 4);
+const endYear = dateEnd === 'present' ? 'present' : dateEnd.slice(0, 4);
+const dateRange = startYear === endYear ? startYear : `${startYear}–${endYear}`;
+---
+
+<article class="work-card">
+  <a href={`/work/${entry.id}`} class="card-link">
+    <div class="card-header">
+      <span class={`badge ${category}`}>{category}</span>
+      <span class="card-date">{dateRange}</span>
+    </div>
+    <h3 class="card-title">{title}</h3>
+    <p class="card-org">{org} · {role}</p>
+    {impact && <p class="card-impact">{impact}</p>}
+    <div class="card-tags">
+      {domains.slice(0, 3).map(d => (
+        <span class="tag">{d}</span>
+      ))}
+      {countries.length > 0 && (
+        <span class="tag tag-countries">{countries.length} {countries.length === 1 ? 'country' : 'countries'}</span>
+      )}
+    </div>
+  </a>
+</article>
+
+<style>
+.work-card {
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  background: var(--color-bg);
+  transition: border-color .15s, box-shadow .15s;
+}
+.work-card:hover {
+  border-color: var(--color-accent);
+  box-shadow: 0 2px 12px rgba(0,0,0,.06);
+}
+.card-link {
+  display: block;
+  padding: var(--space-6);
+  color: inherit;
+}
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-4);
+}
+.card-date {
+  font-size: var(--text-xs);
+  color: var(--color-text-tertiary);
+}
+.card-title {
+  font-family: var(--font-display);
+  font-size: var(--text-xl);
+  color: var(--color-text-primary);
+  line-height: 1.2;
+  margin-bottom: var(--space-2);
+}
+.card-org {
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+  margin-bottom: var(--space-3);
+  line-height: 1.4;
+}
+.card-impact {
+  font-size: var(--text-sm);
+  color: var(--color-accent);
+  font-weight: 500;
+  margin-bottom: var(--space-4);
+  line-height: 1;
+}
+.card-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-top: var(--space-4);
+}
+.tag {
+  font-size: var(--text-xs);
+  color: var(--color-text-tertiary);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  padding: 2px 8px;
+  border-radius: 100px;
+}
+.tag-countries {
+  color: var(--color-accent);
+  background: var(--color-accent-light);
+  border-color: transparent;
+}
+</style>

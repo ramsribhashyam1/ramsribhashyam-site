@@ -1,0 +1,63 @@
+---
+import Base from './Base.astro';
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
+
+interface Props {
+  title: string;
+  description?: string;
+  date?: string;
+  backHref?: string;
+  backLabel?: string;
+}
+
+const { title, description, date, backHref = '/', backLabel = 'Back' } = Astro.props;
+---
+
+<Base title={title} description={description}>
+  <Nav />
+  <main class="post-main">
+    <div class="container">
+      <div class="post-header content-width">
+        <a href={backHref} class="back-link">← {backLabel}</a>
+        {date && <p class="post-date">{date}</p>}
+        <h1 class="post-title">{title}</h1>
+      </div>
+      <article class="prose content-width">
+        <slot />
+      </article>
+    </div>
+  </main>
+  <Footer />
+</Base>
+
+<style>
+.post-main {
+  padding: var(--space-16) 0 var(--space-24);
+}
+.post-header {
+  margin-bottom: var(--space-12);
+}
+.back-link {
+  display: inline-block;
+  font-size: var(--text-sm);
+  color: var(--color-text-tertiary);
+  margin-bottom: var(--space-6);
+  transition: color .15s;
+}
+.back-link:hover {
+  color: var(--color-accent);
+}
+.post-date {
+  font-size: var(--text-sm);
+  color: var(--color-text-tertiary);
+  margin-bottom: var(--space-4);
+  line-height: 1;
+}
+.post-title {
+  font-family: var(--font-display);
+  font-size: clamp(1.75rem, 4vw, 2.75rem);
+  line-height: 1.1;
+  color: var(--color-text-primary);
+}
+</style>

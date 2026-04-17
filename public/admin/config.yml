@@ -3,6 +3,7 @@ backend:
   repo: ramsribhashyam1/ramsribhashyam-site
   branch: main
   base_url: https://aquamarine-mermaid-f8cb41.netlify.app
+  auth_endpoint: auth
 
 media_folder: public/images
 public_folder: /images

@@ -2,6 +2,7 @@ backend:
   name: github
   repo: ramsribhashyam1/ramsribhashyam-site
   branch: main
+  base_url: https://aquamarine-mermaid-f8cb41.netlify.app
 
 media_folder: public/images
 public_folder: /images
@@ -17,30 +18,15 @@ collections:
       - { name: title, label: Title, widget: string }
       - { name: org, label: Organisation, widget: string }
       - { name: role, label: Role title, widget: string }
-      - { name: dateStart, label: Start date, widget: string, hint: "YYYY-MM" }
-      - { name: dateEnd, label: End date, widget: string, hint: "YYYY-MM or present" }
+      - { name: dateStart, label: Start date, widget: string }
+      - { name: dateEnd, label: End date, widget: string }
       - name: category
         label: Category
         widget: select
         options: [project, publication, tool]
       - { name: domains, label: Domains, widget: list }
-      - { name: countries, label: Countries (ISO codes), widget: list }
+      - { name: countries, label: Countries, widget: list }
       - { name: impact, label: Impact metric, widget: string, required: false }
-      - name: mediaLinks
-        label: Media links
-        widget: list
-        required: false
-        fields:
-          - { name: label, label: Label, widget: string }
-          - { name: url, label: URL, widget: string }
-      - name: policyLinks
-        label: Policy links
-        widget: list
-        required: false
-        fields:
-          - { name: label, label: Label, widget: string }
-          - { name: url, label: URL, widget: string }
-      - { name: externalUrl, label: External URL, widget: string, required: false }
       - { name: featured, label: Featured, widget: boolean, default: false }
       - { name: draft, label: Draft, widget: boolean, default: false }
       - { name: body, label: Content, widget: markdown }
@@ -53,7 +39,7 @@ collections:
     format: frontmatter
     fields:
       - { name: title, label: Title, widget: string }
-      - { name: date, label: Date, widget: datetime, format: "YYYY-MM-DD" }
+      - { name: date, label: Date, widget: datetime, format: YYYY-MM-DD }
       - name: type
         label: Type
         widget: select
@@ -70,7 +56,7 @@ collections:
       - { name: body, label: Content, widget: markdown, required: false }
 
   - name: now
-    label: Now (homepage)
+    label: Now
     files:
       - name: now
         label: Current focus

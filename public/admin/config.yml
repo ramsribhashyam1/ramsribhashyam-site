@@ -1,6 +1,6 @@
 backend:
   name: github
-  repo: YOUR_GITHUB_USERNAME/ramsribhashyam-site
+  repo: ramsribhashyam1/ramsribhashyam-site
   branch: main
 
 media_folder: public/images

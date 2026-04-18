@@ -49,11 +49,17 @@ async function initMap() {
     // West & East Africa
     SN: '686', GH: '288', CI: '384', RW: '646', ZM: '894', KE: '404',
   };
-  const workedNumericIds = new Set(
-    [...workedCountries.keys()]
-      .map(code => isoToNumeric[code])
-      .filter(Boolean)
-  );
+  const countryNames = {
+    BA: 'Bosnia & Herzegovina', RS: 'Serbia', MK: 'North Macedonia',
+    AL: 'Albania', ME: 'Montenegro', XK: 'Kosovo', UA: 'Ukraine',
+    MA: 'Morocco', DZ: 'Algeria', TN: 'Tunisia', EG: 'Egypt',
+    JO: 'Jordan', LB: 'Lebanon', US: 'United States', BE: 'Belgium',
+    IN: 'India', BD: 'Bangladesh', LK: 'Sri Lanka', MU: 'Mauritius',
+    SN: 'Senegal', GH: 'Ghana', CI: "Côte d'Ivoire", RW: 'Rwanda',
+    ZM: 'Zambia', KE: 'Kenya',
+  };
+  // Highlight all countries in the map — fieldwork collection adds tooltip detail
+  const workedNumericIds = new Set(Object.values(isoToNumeric));
 
   function draw() {
     container.innerHTML = '';
@@ -97,19 +103,19 @@ async function initMap() {
 
             const alpha2 = Object.entries(isoToNumeric).find(([, v]) => v === numId)?.[0];
             const data = workedCountries.get(alpha2);
-            if (!data) return;
+            const name = data?.countryName ?? countryNames[alpha2] ?? alpha2;
 
             d3.select(this).attr('fill', colorAccent).attr('opacity', 0.8);
 
             tooltip.innerHTML = `
-              <strong>${data.countryName}</strong>
-              ${data.roles.map(r => `
+              <strong>${name}</strong>
+              ${data ? data.roles.map(r => `
                 <div class="tip-role">
                   <span class="tip-org">${r.org}</span>
                   <span class="tip-title">${r.title} · ${r.years}</span>
                   <span class="tip-summary">${r.summary}</span>
                 </div>
-              `).join('')}
+              `).join('') : ''}
             `;
             tooltip.setAttribute('aria-hidden', 'false');
             tooltip.style.display = 'block';

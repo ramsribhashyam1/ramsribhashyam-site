@@ -1,100 +1,89 @@
 ---
-import Post from '../layouts/Post.astro';
+import Base from '../layouts/Base.astro';
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
 ---
 
-<Post
-  title="About"
-  description="Sai Sri Ram Sribhashyam — AI systems, labor markets, and digital public infrastructure across 15 countries."
-  backHref="/"
-  backLabel="Home"
+<Base
+  title="About — Sai Sri Ram Sribhashyam"
+  description="Sai Sri Ram Sribhashyam — AI systems, labor markets, and digital public infrastructure across 30+ countries."
 >
-  <p class="lead">
-    I build AI systems that help institutions see what's actually happening in
-    labor markets — and help people navigate them.
-  </p>
+  <Nav />
+  <main class="about-main container">
+    <div class="about-header">
+      <div class="about-photo-placeholder" aria-label="Ram Sribhashyam">SR</div>
+      <p class="about-name">Sai Sri Ram Sribhashyam</p>
+    </div>
 
-  <h2>The arc</h2>
+    <div class="about-body">
+      <p class="about-para">
+        I started as an engineer — BITS Pilani, mechanical and chemistry — and spent
+        the first years of my career at Mu Sigma and Grameen Foundation building
+        analytics systems and learning what it takes to turn data into decisions that
+        actually change something. That brought me to the World Bank, where I spent
+        twelve years working across Group Internal Audit, the Education Global
+        Practice, and cross-functional analytics — overseeing $2B+ portfolios,
+        building AI-powered monitoring systems, and leading the labor market analytics
+        work that shaped policy across MENA, South Asia, and the Western Balkans.
+        Most recently I was in Andhra Pradesh with the Tony Blair Institute, working
+        directly with ministers and IAS officers to design the AI infrastructure for
+        one of India's largest state governments.
+      </p>
 
-  <p>
-    I studied at BITS Pilani, then spent four years at Mu Sigma building
-    predictive analytics for pharmaceutical clients. The work was technically
-    interesting but felt disconnected from anything that mattered. I wanted to
-    understand why some people got to participate in economies and others didn't.
-  </p>
-
-  <p>
-    That led to Grameen Foundation, then to a decade straddling the World Bank
-    and development consulting — building digital credentialing platforms in
-    Sub-Saharan Africa, running NLP pipelines over a hundred thousand job
-    postings in MENA, advising the government of Andhra Pradesh on AI for
-    education-to-employment at the level of five ministries.
-  </p>
-
-  <p>
-    Most recently at the Tony Blair Institute. Currently in San Francisco,
-    thinking about what it means to build AI for development in the 2030s.
-  </p>
-
-  <h2>Two moments that shaped the work</h2>
-
-  <p>
-    On Mt. Kigali, over dinner with a University of Rwanda student who had a
-    Master's in IoT and couldn't find work. Not because she lacked skill.
-    Because no employer could see what she knew. That conversation became the
-    compass for the credentialing work that followed — and for most of what
-    came after.
-  </p>
-
-  <p>
-    In a room in Andhra Pradesh with ministers who had agreed, after months of
-    work, to share data across five ministries to build an AI-enabled
-    education-to-employment platform. The technical challenge was tractable.
-    The political economy challenge — getting five departments to trust a shared
-    system — was the real work. That's usually true.
-  </p>
-
-  <h2>What I'm interested in now</h2>
-
-  <p>
-    Senior roles at the intersection of AI and international development.
-    Organizations trying to build things that last — that are still running
-    five years after the project ends. Based in San Francisco, open to remote
-    and travel-heavy work.
-  </p>
-
-  <p>
-    If you're building something in this space, I'd like to hear about it.
-  </p>
-
-  <div class="contact-links">
-    <a href="https://linkedin.com/in/saisriram" target="_blank" rel="noopener">
-      LinkedIn ↗
-    </a>
-  </div>
-</Post>
+      <p class="about-para">
+        The thread across all of it is the same problem: the gap between what people
+        and institutions can do, and what systems can see and act on. Whether that's
+        a University of Rwanda graduate with a Master's in IoT that no employer can
+        verify, a labor market model that fails Arabic-speaking workers because the
+        training data was thinner there, or a government ministry that has the mandate
+        but not the architecture to deliver at scale — the work is always about closing
+        that gap. I'm relocating to San Francisco and looking for the next place to do
+        that — at the intersection of AI systems, real-world institutions, and the
+        people they're supposed to serve.
+      </p>
+    </div>
+  </main>
+  <Footer />
+</Base>
 
 <style>
-.lead {
-  font-family: var(--font-display);
-  font-size: var(--text-xl);
-  color: var(--color-text-primary);
-  line-height: 1.5;
-  margin-bottom: var(--space-10);
+.about-main {
+  padding: 6rem 0 var(--space-24);
+  max-width: 640px;
 }
-.contact-links {
-  margin-top: var(--space-12);
-  padding-top: var(--space-8);
-  border-top: 1px solid var(--color-border);
+.about-header {
   display: flex;
-  gap: var(--space-6);
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-4);
+  margin-bottom: var(--space-12);
 }
-.contact-links a {
-  font-size: var(--text-sm);
+.about-photo-placeholder {
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  background: var(--color-accent-light);
   color: var(--color-accent);
+  font-size: var(--text-xl);
   font-weight: 500;
-  transition: opacity .15s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  letter-spacing: 0.05em;
 }
-.contact-links a:hover {
-  opacity: 0.7;
+.about-name {
+  font-size: var(--text-base);
+  font-weight: 500;
+  color: var(--color-text-primary);
+}
+.about-body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+}
+.about-para {
+  font-size: var(--text-base);
+  color: var(--color-text-secondary);
+  line-height: 1.75;
 }
 </style>

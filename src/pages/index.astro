@@ -4,191 +4,284 @@ import Nav from '../components/Nav.astro';
 import Footer from '../components/Footer.astro';
 import WorldMap from '../components/WorldMap.astro';
 import NowBlock from '../components/NowBlock.astro';
-import FoundryCard from '../components/FoundryCard.astro';
-import { getFeaturedWork, getPublishedFoundry } from '../lib/content';
 
-const featuredWork = await getFeaturedWork();
-const recentFoundry = (await getPublishedFoundry()).slice(0, 3);
+const cards = [
+  // Row 1
+  { tag: 'AI',           color: 'purple', theme: 'AI systems & evaluation',           desc: 'Designing pipelines that know where they fail — and why that matters more than average performance.' },
+  { tag: 'Labor',        color: 'teal',   theme: 'Labor markets & skills',            desc: 'Building the data infrastructure that makes workforce transitions legible to governments and institutions.' },
+  { tag: 'Human capital',color: 'teal',   theme: 'Human capital & social protection', desc: 'Connecting education, skills, and social systems — so that investments in people show up as outcomes, not just outputs.' },
+  { tag: 'DPI',          color: 'purple', theme: 'Digital public infrastructure',     desc: 'Designing the interoperable layers — credentials, registries, labor market signals — that make digital economies inclusive.' },
+  // Row 2
+  { tag: 'ML',           color: 'coral',  theme: 'ML pipelines & AI workflows',       desc: 'Building NLP systems, RAG pipelines, and annotation frameworks that hold up when deployed against real-world messiness.' },
+  { tag: 'Product',      color: 'blue',   theme: 'Product development & consumer AI', desc: 'Taking AI-enabled products from 0 to 1 — across credentialing platforms, audit tools, and education-to-employment systems.' },
+  { tag: 'Product',      color: 'blue',   theme: 'Product evaluation & PRDs',         desc: 'Writing the specs that teams actually build from — requirements grounded in user research, technical constraints, and measurable outcomes.' },
+  { tag: 'Audit',        color: 'amber',  theme: 'Audit & governance',                desc: 'Applying AI to program oversight and institutional accountability — $2B+ portfolios, fragile states, and the structures that keep large systems honest.' },
+  // Row 3
+  { tag: 'Climate',      color: 'teal',   theme: 'Climate & green transition',        desc: 'Mapping the skills the green economy needs — and where workforce gaps will hit hardest across MENA, South Asia, and the Western Balkans.' },
+  { tag: 'Teaching',     color: 'green',  theme: 'Teaching & capacity building',      desc: 'Building AI literacy across governments, universities, and development institutions — so the tools outlast the project.' },
+  { tag: 'Writing',      color: 'green',  theme: 'Thought leadership & writing',      desc: 'Publishing frameworks, field notes, and analysis at the intersection of AI, labor markets, and global development.' },
+  { tag: 'Program',      color: 'amber',  theme: 'Program design & delivery',         desc: 'Designing and running programs that connect evidence to implementation — across MDB portfolios, government partnerships, and field operations.' },
+] as const;
+
+const tagColors: Record<string, { bg: string; text: string }> = {
+  purple: { bg: '#EEEDFE', text: '#534AB7' },
+  teal:   { bg: '#E1F5EE', text: '#0F6E56' },
+  coral:  { bg: '#FAECE7', text: '#993C1D' },
+  blue:   { bg: '#E6F1FB', text: '#185FA5' },
+  amber:  { bg: '#FAEEDA', text: '#854F0B' },
+  green:  { bg: '#EAF3DE', text: '#3B6D11' },
+};
 ---
 
 <Base title="Sai Sri Ram Sribhashyam">
   <Nav />
   <main>
-    <section class="hero container">
-      <p class="hero-label">Sai Sri Ram Sribhashyam</p>
-      <h1 class="hero-line">
-        Building bridges between human capability<br />and institutional legibility.
-      </h1>
-      <p class="hero-sub">
-        AI systems · Labor markets · Digital public infrastructure · 15 countries
-      </p>
-      <nav class="hero-nav">
-        <a href="/work">Work</a>
-        <a href="/foundry">The Foundry</a>
-        <a href="/fieldwork">Fieldwork</a>
-        <a href="/about">About</a>
-      </nav>
+
+    <!-- 1. Thesis block -->
+    <section class="thesis container">
+      <div class="thesis-left">
+        <div class="thesis-photo" aria-label="Ram Sribhashyam">SR</div>
+        <p class="thesis-name">Sai Sri Ram Sribhashyam</p>
+        <div class="thesis-socials">
+          <a href="https://linkedin.com/in/saisriramsk" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+          <a href="mailto:saisriramsk@gmail.com">Email</a>
+        </div>
+      </div>
+      <div class="thesis-right">
+        <p class="thesis-statement">
+          I work at the intersection of AI systems, labor markets, and digital public infrastructure — building things that function at government scale, in places most AI practitioners have never been.
+        </p>
+        <p class="thesis-subtitle">Senior AI &amp; Development Professional · Washington D.C. → San Francisco</p>
+      </div>
     </section>
 
+    <!-- 2. World map -->
     <section class="map-section" aria-label="Countries where I have worked">
       <WorldMap />
     </section>
 
-    <section class="now-section container">
-      <NowBlock />
+    <!-- 3. Theme cards -->
+    <section class="themes container">
+      <h2 class="section-heading">Areas of work</h2>
+      <div class="theme-grid">
+        {cards.map(card => {
+          const color = tagColors[card.color];
+          return (
+            <div class="theme-card">
+              <span class="theme-tag" style={`background:${color.bg};color:${color.text}`}>{card.tag}</span>
+              <p class="theme-name">{card.theme}</p>
+              <p class="theme-desc">{card.desc}</p>
+            </div>
+          );
+        })}
+      </div>
     </section>
 
-    {featuredWork.length > 0 && (
-      <section class="featured-section container">
-        <h2 class="section-heading">Selected work</h2>
-        <div class="work-grid">
-          {featuredWork.map(entry => (
-            <article class="featured-work-item">
-              <a href={`/work/${entry.id}`} class="featured-link">
-                <p class="featured-org">{entry.data.org}</p>
-                <h3 class="featured-title">{entry.data.title}</h3>
-                {entry.data.impact && (
-                  <p class="featured-impact">{entry.data.impact}</p>
-                )}
-              </a>
-            </article>
-          ))}
+    <!-- 4. Now + Get in touch -->
+    <section class="bottom container">
+      <div class="bottom-grid">
+        <div class="bottom-col">
+          <h2 class="section-heading">Now</h2>
+          <NowBlock />
         </div>
-        <a href="/work" class="see-all">All work →</a>
-      </section>
-    )}
+        <div class="bottom-col">
+          <h2 class="section-heading">Get in touch</h2>
+          <div class="contact-box">
+            <p class="contact-text">
+              Always interested in good conversations — about AI, labor markets,
+              development, or anything at the edges of all three.
+            </p>
+            <div class="contact-links">
+              <a href="mailto:saisriramsk@gmail.com">saisriramsk@gmail.com</a>
+              <a href="https://linkedin.com/in/saisriramsk" target="_blank" rel="noopener noreferrer">linkedin.com/in/saisriramsk</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
 
-    {recentFoundry.length > 0 && (
-      <section class="foundry-section container">
-        <h2 class="section-heading">Recent from the Foundry</h2>
-        <div class="foundry-grid">
-          {recentFoundry.map(entry => (
-            <FoundryCard entry={entry} />
-          ))}
-        </div>
-        <a href="/foundry" class="see-all">All writing →</a>
-      </section>
-    )}
   </main>
   <Footer />
 </Base>
 
 <style>
-.hero {
-  padding: var(--space-24) 0 var(--space-16);
+/* ── Thesis ── */
+.thesis {
+  display: grid;
+  grid-template-columns: 140px 1fr;
+  gap: var(--space-12);
+  align-items: start;
+  padding-top: 6rem;
+  padding-bottom: 5rem;
 }
-.hero-label {
-  font-size: var(--text-sm);
-  color: var(--color-text-tertiary);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  margin-bottom: var(--space-4);
-  line-height: 1;
+@media (max-width: 580px) {
+  .thesis {
+    grid-template-columns: 1fr;
+    gap: var(--space-8);
+  }
 }
-.hero-line {
-  font-family: var(--font-display);
-  font-size: clamp(2rem, 5vw, 3.5rem);
-  line-height: 1.1;
-  color: var(--color-text-primary);
-  margin-bottom: var(--space-6);
-  max-width: 22ch;
-}
-.hero-sub {
-  font-size: var(--text-base);
-  color: var(--color-text-tertiary);
-  margin-bottom: var(--space-8);
-  line-height: 1;
-}
-.hero-nav {
+.thesis-photo {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: var(--color-accent-light);
+  color: var(--color-accent);
+  font-size: var(--text-xl);
+  font-weight: 500;
   display: flex;
-  gap: var(--space-6);
-  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  letter-spacing: 0.05em;
 }
-.hero-nav a {
+.thesis-name {
   font-size: var(--text-sm);
   font-weight: 500;
+  color: var(--color-text-primary);
+  margin-top: var(--space-4);
+  margin-bottom: var(--space-3);
+  line-height: 1.3;
+}
+.thesis-socials {
+  display: flex;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+}
+.thesis-socials a {
+  font-size: var(--text-sm);
   color: var(--color-text-secondary);
   border-bottom: 1px solid var(--color-border);
-  padding-bottom: 2px;
+  padding-bottom: 1px;
   transition: color .15s, border-color .15s;
 }
-.hero-nav a:hover {
+.thesis-socials a:hover {
   color: var(--color-accent);
   border-color: var(--color-accent);
 }
+.thesis-statement {
+  font-family: var(--font-display);
+  font-size: clamp(1.05rem, 2.2vw, 1.35rem);
+  color: var(--color-text-primary);
+  line-height: 1.55;
+  margin-bottom: var(--space-4);
+}
+.thesis-subtitle {
+  font-size: var(--text-sm);
+  color: var(--color-text-tertiary);
+  line-height: 1.4;
+}
+
+/* ── Map ── */
 .map-section {
   width: 100%;
-  height: 420px;
-  background: var(--color-surface);
+  height: 480px;
   border-top: 1px solid var(--color-border);
   border-bottom: 1px solid var(--color-border);
   overflow: hidden;
 }
-.now-section {
-  padding: var(--space-16) 0;
-}
-.featured-section,
-.foundry-section {
-  padding-bottom: var(--space-16);
+
+/* ── Theme cards ── */
+.themes {
+  padding: 5rem 0;
 }
 .section-heading {
   font-family: var(--font-display);
   font-size: var(--text-2xl);
+  font-weight: 400;
   color: var(--color-text-primary);
-  margin-bottom: var(--space-8);
+  margin-bottom: 2rem;
 }
-.work-grid {
+.theme-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: var(--space-4);
-  margin-bottom: var(--space-6);
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
 }
-.featured-work-item {
+@media (max-width: 900px) {
+  .theme-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media (max-width: 480px) {
+  .theme-grid {
+    grid-template-columns: 1fr;
+  }
+}
+.theme-card {
   border: 1px solid var(--color-border);
   border-radius: 8px;
-  transition: border-color .15s;
-}
-.featured-work-item:hover {
-  border-color: var(--color-accent);
-}
-.featured-link {
-  display: block;
   padding: var(--space-6);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
 }
-.featured-org {
+.theme-tag {
+  display: inline-block;
   font-size: var(--text-xs);
-  color: var(--color-text-tertiary);
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  margin-bottom: var(--space-2);
-  line-height: 1;
-}
-.featured-title {
-  font-family: var(--font-display);
-  font-size: var(--text-lg);
-  color: var(--color-text-primary);
-  line-height: 1.25;
-  margin-bottom: var(--space-3);
-}
-.featured-impact {
-  font-size: var(--text-sm);
-  color: var(--color-accent);
   font-weight: 500;
-  line-height: 1;
+  letter-spacing: 0.04em;
+  padding: 2px 8px;
+  border-radius: 4px;
+  align-self: flex-start;
 }
-.foundry-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: var(--space-4);
-  margin-bottom: var(--space-6);
+.theme-name {
+  font-size: var(--text-sm);
+  font-weight: 500;
+  color: var(--color-text-primary);
+  line-height: 1.3;
 }
-.see-all {
+.theme-desc {
   font-size: var(--text-sm);
   color: var(--color-text-secondary);
-  font-weight: 500;
-  transition: color .15s;
+  line-height: 1.55;
 }
-.see-all:hover {
+
+/* ── Now + Contact ── */
+.bottom {
+  padding: 5rem 0;
+}
+.bottom-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  align-items: start;
+}
+@media (max-width: 640px) {
+  .bottom-grid {
+    grid-template-columns: 1fr;
+  }
+}
+.bottom-col {
+  display: flex;
+  flex-direction: column;
+}
+.contact-box {
+  background: var(--color-surface);
+  border-radius: 12px;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  height: 100%;
+  box-sizing: border-box;
+}
+.contact-text {
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+  line-height: 1.65;
+}
+.contact-links {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin-top: auto;
+}
+.contact-links a {
+  font-size: var(--text-sm);
   color: var(--color-accent);
+  align-self: flex-start;
+  border-bottom: 1px solid transparent;
+  transition: border-color .15s;
+}
+.contact-links a:hover {
+  border-color: var(--color-accent);
 }
 </style>

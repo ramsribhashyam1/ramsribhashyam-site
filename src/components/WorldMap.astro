@@ -34,9 +34,20 @@ async function initMap() {
 
   // ISO alpha-2 → TopoJSON numeric ID mapping (subset of worked countries)
   const isoToNumeric = {
-    IN: '356', RW: '646', MA: '504', JO: '400', LB: '422',
-    BA: '070', RS: '688', MK: '807', AL: '008', ME: '499',
-    XK: '383', GH: '288', NG: '566', TZ: '834', US: '840',
+    // Western Balkans
+    BA: '070', RS: '688', MK: '807', AL: '008', ME: '499', XK: '383',
+    // Eastern Europe
+    UA: '804',
+    // MENA / North Africa
+    MA: '504', DZ: '012', TN: '788', EG: '818', JO: '400', LB: '422',
+    // Americas + Western Europe
+    US: '840', BE: '056',
+    // South Asia
+    IN: '356', BD: '050', LK: '144',
+    // Indian Ocean
+    MU: '480',
+    // West & East Africa
+    SN: '686', GH: '288', CI: '384', RW: '646', ZM: '894', KE: '404',
   };
   const workedNumericIds = new Set(
     [...workedCountries.keys()]

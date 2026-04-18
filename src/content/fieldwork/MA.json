@@ -1,0 +1,13 @@
+{
+  "countryCode": "MA",
+  "countryName": "Morocco",
+  "region": "MENA",
+  "roles": [
+    {
+      "org": "World Bank",
+      "title": "AI Product Manager",
+      "years": "2020–2023",
+      "summary": "NLP pipeline over Arabic-language job postings; labor market intelligence for MENA region."
+    }
+  ]
+}

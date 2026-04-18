@@ -1,0 +1,13 @@
+{
+  "countryCode": "RW",
+  "countryName": "Rwanda",
+  "region": "East Africa",
+  "roles": [
+    {
+      "org": "Grameen Foundation / ACE",
+      "title": "Technical Advisor",
+      "years": "2019–2022",
+      "summary": "Designed blockchain credentialing platform for University of Rwanda graduates — 12,000+ credentials issued across 8 countries."
+    }
+  ]
+}
